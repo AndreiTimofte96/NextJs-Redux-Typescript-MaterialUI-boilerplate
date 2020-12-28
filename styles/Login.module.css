@@ -1,0 +1,24 @@
+.loginContainer{
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  align-items: center;
+  justify-content: center;
+}
+
+.loginForm{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: lightgray;
+  padding: 30px;
+}
+
+.title{
+  text-align: center;
+}
+
+.loginButton{
+  width: 100%;
+}

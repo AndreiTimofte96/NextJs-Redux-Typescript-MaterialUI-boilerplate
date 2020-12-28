@@ -12,7 +12,7 @@ const SSRPage = () => {
   return (
     <div className={styles.container}>
       <div>SSR PAGE</div>
-      <h1>You are not logged in</h1>
+      <h1>You are now logged in</h1>
       <Link href='/'>
         <div className={styles.link}> Back to homepage </div>
       </Link>

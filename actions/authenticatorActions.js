@@ -1,19 +1,10 @@
 import Router from 'next/router'
 import * as types from '../store/types'
 
-const unauthenticatedRoutes = ['/', '/login']
 
-export const checkAndRedirect = (router, isAuthenthicated) => async (dispatch) => {
-
-  dispatch(setIsAuthNotNeeded(false))
-  if (unauthenticatedRoutes.indexOf(router.pathname) !== -1) { // if it is a route that doesn't require authentication
-    return dispatch(setIsAuthNotNeeded(true))
-  }
-
-  if (isAuthenthicated) return; //discutabil
-
-  const token = localStorage.getItem('myToken')
-  if (!token) { // if we dont have a token, redirect to authentication page
+export const checkSessionAndRedirect = (token) => async (dispatch) => {
+  // if we dont have a token, redirect to authentication page
+  if (!token) {
     return Router.push('/login')
   }
 
@@ -22,17 +13,27 @@ export const checkAndRedirect = (router, isAuthenthicated) => async (dispatch) =
     const response = await authenticatorService(token)
     dispatch(setIsLoading(false))
 
-    if (response.isAuthenthicated) {
-      return dispatch(setIsSuccess(true))
+    if (response.isAuthenticated) {
+      dispatch(setIsSuccess(true))
+    } else {
+      Router.push('/login')
     }
-
-    return Router.push('/login')
-
   } catch (err) {
     dispatch(setIsLoading(false))
     dispatch(setIsError(true, err.message))
-    return Router.push('/login')
+    Router.push('/login')
   }
+}
+
+export const checkLoginSessionAndRedirect = (token) => async (dispatch) => {
+  dispatch(setIsLoading(true))
+  const response = await authenticatorService(token)
+  dispatch(setIsLoading(false))
+
+  if (response.isAuthenticated) {
+    Router.push('/ssr-page')
+  }
+  return response.isAuthenticated
 }
 
 const setIsLoading = (isLoading) => ({
@@ -40,14 +41,9 @@ const setIsLoading = (isLoading) => ({
   payload: isLoading,
 })
 
-const setIsAuthNotNeeded = (authNotNeeded) => ({
-  type: types.AUTHENTICATOR_AUTH_NOT_NEEDED,
-  payload: authNotNeeded,
-})
-
-const setIsSuccess = (isAuthenthicated) => ({
+const setIsSuccess = (isAuthenticated) => ({
   type: types.AUTHENTICATOR_SUCCESS,
-  payload: isAuthenthicated,
+  payload: isAuthenticated,
 })
 
 const setIsError = (isError, errorMessage) => ({
@@ -63,15 +59,20 @@ const authenticatorService = (token) =>
 
       if (JSON.parse(token) + threeMinutes > new Date().getTime()) {
         resolve({
-          isAuthenthicated: true,
+          isAuthenticated: true,
           token,
         })
       } else {
         resolve({
-          isAuthenthicated: false,
+          isAuthenticated: false,
           token,
         })
       }
     }, 3000)
   )
 
+export const autoLogout = (milliseconds) =>
+  setTimeout(() => {
+    localStorage.removeItem('myToken')
+    Router.reload()
+  }, milliseconds)

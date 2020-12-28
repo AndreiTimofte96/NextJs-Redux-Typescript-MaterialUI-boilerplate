@@ -13,9 +13,16 @@ export default function Home() {
       <Link href='/ssr-page'>
         <div className={styles.link}>SSR Page</div>
       </Link>
+      <Link href='/login'>
+        <div className={styles.link}>Login Page</div>
+      </Link>
 
       <button onClick={() => localStorage.setItem('myToken', JSON.stringify(new Date().getTime()))}>
         SET TOKEN IN LS
+      </button>
+
+      <button onClick={() => localStorage.removeItem('myToken')}>
+        REMOVE TOKEN IN LS
       </button>
 
       <main className={styles.main}>
@@ -69,6 +76,6 @@ export default function Home() {
           <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
         </a>
       </footer>
-    </div>
+    </div >
   )
 }

@@ -2,8 +2,7 @@ import * as types from '../store/types'
 
 const initialState = {
   isLoading: false,
-  authNotNeeded: false,
-  isAuthenthicated: false,
+  isAuthenticated: false,
   isError: false,
   errorMessage: '',
 }
@@ -15,24 +14,17 @@ const authenticatorReducer = (state = initialState, { type, payload, errorMessag
         ...state,
         isLoading: payload,
       }
-    case types.AUTHENTICATOR_AUTH_NOT_NEEDED:
-      return {
-        ...state,
-        authNotNeeded: payload,
-      }
     case types.AUTHENTICATOR_SUCCESS:
       return {
         isLoading: false,
-        authNotNeeded: false,
-        isAuthenthicated: payload,
+        isAuthenticated: payload,
         isError: false,
         errorMessage: '',
       }
     case types.AUTHENTICATOR_ERROR:
       return {
         isLoading: false,
-        authNotNeeded: false,
-        isAuthenthicated: false,
+        isAuthenticated: false,
         isError: payload,
         errorMessage,
       }

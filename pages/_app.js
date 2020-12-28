@@ -3,12 +3,12 @@ import { useStore } from '../store/store'
 import { Authenticator } from '../HOC'
 import '../styles/globals.css'
 
-const MyApp = ({ Component, pageProps, router }) => {
+const MyApp = ({ Component, pageProps }) => {
   const store = useStore(pageProps)
 
   return (
     <Provider store={store}>
-      <Authenticator router={router}>
+      <Authenticator>
         <Component {...pageProps} />
       </Authenticator>
     </Provider>
