@@ -3,19 +3,25 @@ import { useRouter } from 'next/router'
 import { useDispatch, useSelector } from 'react-redux'
 import { CircularProgress } from '@material-ui/core'
 import { checkSessionAndRedirect, checkLoginSessionAndRedirect } from '../actions/authenticatorActions'
+import { RootStore } from '../store/store'
+import styles from '../styles/Login.module.css'
 
-const unauthenticatedRoutes = ['/', '/login']
+interface PropsI {
+  children: JSX.Element
+}
 
-const Authenticator = ({ children }) => {
-  const { isLoading, isAuthenticated } = useSelector(state => state.authenticator)
+const unauthenticatedRoutes: Array<string> = ['/', '/login']
+
+const Authenticator = ({ children }: PropsI): JSX.Element | null => {
+  const { isLoading, isAuthenticated } = useSelector((state: RootStore) => state.authenticator)
   const [authNotNeeded, setAuthNotNeeded] = useState(false)
   const { pathname } = useRouter()
   const dispatch = useDispatch()
 
   useEffect(() => {
-    (async () => {
-      const token = localStorage.getItem('myToken')
-
+    (async (): Promise<void> => {
+      const token: string | null = localStorage.getItem('myToken')
+      setAuthNotNeeded(false)
       if (pathname === '/login' && token) {
         const isAuthenticated = await dispatch(checkLoginSessionAndRedirect(token))
         setAuthNotNeeded(!isAuthenticated)
@@ -32,9 +38,17 @@ const Authenticator = ({ children }) => {
     })()
   }, [pathname])
 
-  if (isLoading) return <CircularProgress color="secondary" />
+  if (isLoading) {
+    return (
+      <div className={styles.spinnerWrapper}>
+        <CircularProgress size={100} color="secondary" />
+      </div>
+    )
+  }
 
-  if (!isLoading && (isAuthenticated || authNotNeeded)) return children
+  if (!isLoading && (isAuthenticated || authNotNeeded)) {
+    return children
+  }
 
   return null
 }

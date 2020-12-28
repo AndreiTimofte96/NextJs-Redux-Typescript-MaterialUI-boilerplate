@@ -2,12 +2,13 @@ import axios from 'axios'
 import Link from 'next/Link'
 import { useSelector, useDispatch } from 'react-redux'
 import { Button, Box } from '@material-ui/core';
-import { incrementCount, decrementCount, resetCount } from '../actions/SSRActions'
-import styles from '../styles/SSRPage.module.css'
+import { incrementCount, decrementCount, resetCount } from '../actions/ssrActions'
+import styles from '../styles/SsrPage.module.css'
+import { RootStore } from '../store/store'
 
-const SSRPage = () => {
+const SsrPage = () => {
   const dispatch = useDispatch()
-  const { counter } = useSelector(state => state.ssr)
+  const { counter } = useSelector((state: RootStore) => state.ssr)
 
   return (
     <div className={styles.container}>
@@ -32,7 +33,7 @@ const SSRPage = () => {
   )
 }
 
-SSRPage.getInitialProps = async () => {
+SsrPage.getInitialProps = async () => {
   try {
     const response = await axios.get('https://api.github.com/repos/zeit/next.js')
     return {
@@ -46,4 +47,4 @@ SSRPage.getInitialProps = async () => {
   }
 }
 
-export default SSRPage
+export default SsrPage

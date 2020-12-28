@@ -1,20 +1,20 @@
 import { useMemo } from 'react'
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, Store, applyMiddleware, } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import thunkMiddleware from 'redux-thunk'
-import reducers from './reducers'
+import rootReducers from './reducers'
 
-let store
+let store: Store | undefined
 
-const initStore = (initialState) =>
+const initStore = (initialState: object) =>
   createStore(
-    reducers,
+    rootReducers,
     initialState,
     composeWithDevTools(applyMiddleware(thunkMiddleware))
   )
 
-export const initializeStore = (preloadedState) => {
-  let _store = store ?? initStore(preloadedState)
+export const initializeStore = (preloadedState: object) => {
+  let _store: Store = store ?? initStore(preloadedState)
 
   // After navigating to a page with an initial Redux state, merge that state
   // with the current state in the store, and create a new store
@@ -24,6 +24,7 @@ export const initializeStore = (preloadedState) => {
       ...preloadedState,
     })
     // Reset the current store
+    /* tslint:disable-next-line */
     store = undefined
   }
 
@@ -35,7 +36,9 @@ export const initializeStore = (preloadedState) => {
   return _store
 }
 
-export const useStore = (initialState) => {
+export const useStore = (initialState: object) => {
   const store = useMemo(() => initializeStore(initialState), [initialState])
   return store
 }
+
+export type RootStore = ReturnType<typeof rootReducers>;

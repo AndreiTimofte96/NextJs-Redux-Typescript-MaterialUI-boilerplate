@@ -1,2 +1,2 @@
 export { default as authenticatorReducer } from './authenticatorReducer'
-export { default as SSRReducer } from './SSRReducer'
+export { default as ssrReducer } from './ssrReducer'
